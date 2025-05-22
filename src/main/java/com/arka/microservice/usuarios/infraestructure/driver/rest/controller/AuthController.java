@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final IUserPortUseCase userService;
-    private final IAuthPortUseCase authService;
+    /*private final IAuthPortUseCase authService;*/
     private final IUserMapperDto mapper;
 
     /**
@@ -27,7 +27,6 @@ public class AuthController {
      * @Valid valida automaticamente los datos que llegan en el request
      * @param userRequestDto Datos del usuario a crear.
      * @return Usuario creado con código 201.
-     */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<AuthResponseDto> register(@Valid @RequestBody UserRequestDto userRequestDto) {
@@ -38,9 +37,9 @@ public class AuthController {
                     response.setAccessToken(authResponse.getAccessToken());
                     return response;
                 });
-    }
+    }*/
 
-    @PostMapping("/authenticate")
+    /*@PostMapping("/authenticate")
     @ResponseStatus(HttpStatus.OK)
     public Mono<AuthResponseDto> authenticate(@RequestBody AuthRequestDto requestDto){
         UserModel model = mapper.authReqtoModel(requestDto);
@@ -50,5 +49,5 @@ public class AuthController {
                     response.setAccessToken(authResponse.getAccessToken());
                     return response;
                 });
-    }
+    }*/
 }

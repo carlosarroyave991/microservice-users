@@ -15,12 +15,12 @@ import reactor.core.publisher.Mono;
 /**
  * Clase usada para implementar la logica de negocio sobre cada funcion
  */
-@Service
+/*@Service
 @RequiredArgsConstructor
 public class AuthUseCaseImpl implements IAuthPortUseCase{
     private final UserPersistencePort servicePort;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+//    private final JwtService jwtService;
     private final ReactiveAuthenticationManager authenticationManager;
 
     @Override
@@ -36,12 +36,12 @@ public class AuthUseCaseImpl implements IAuthPortUseCase{
                     DomainUserDetails userDetails = (DomainUserDetails) authentication.getPrincipal();
 
                     // Genera el JWT utilizando tu servicio
-                    String jwtToken = jwtService.generateToken(userDetails);
+                    *//*String jwtToken = jwtService.generateToken(userDetails);*//*
 
                     // Crea y retorna la respuesta de autenticación con el token
                     AuthModel authModel = new AuthModel();
-                    authModel.setAccessToken(jwtToken);
+                    *//*authModel.setAccessToken(jwtToken);*//*
                     return Mono.just(authModel);
                 });
     }
-}
+}*/

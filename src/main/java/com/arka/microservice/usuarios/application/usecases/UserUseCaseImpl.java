@@ -32,7 +32,6 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     private final UsernameValidationService usernameValidationService;
     private final UserTypeValidationService userTypeValidationService;
     private final EmailValidationService emailValidationService;
-    private final JwtService jwtService;
 
 
     /**
@@ -74,7 +73,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
      */
     @Transactional
     @Override
-    public Mono<AuthModel> createUser(UserModel model){
+    public Mono<UserModel> createUser(UserModel model){
         // Asignar tipo de usuario por defecto si no está definido
         if (model.getUserType() == null) model.setUserType(UserType.cliente);
         // Validar el tipo de usuario
@@ -93,19 +92,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
         //Validar si el dni ya existe en la base de datos
         return servicePort.findByDni(model.getDni())
                 .flatMap(existing -> Mono.<UserModel>error(new DuplicateResourceException(DNI_ALREADY_EXISTS)))
-                .switchIfEmpty(Mono.defer(() -> servicePort.save(model)))
-                .flatMap(savedUser ->{
-                    // Convertir el usuario guardado en un objeto que implemente UserDetails
-                    DomainUserDetails userDetails = new DomainUserDetails(savedUser);
-                    // Generar el token JWT con el servicio correspondiente
-                    String jwtToken = jwtService.generateToken(userDetails);
-
-                    // Construir la respuesta de autenticación
-                    AuthModel authModel = new AuthModel();
-                    authModel.setAccessToken(jwtToken);
-
-                    return Mono.just(authModel);
-                });
+                .switchIfEmpty(Mono.defer(() -> servicePort.save(model)));
     }
 
 

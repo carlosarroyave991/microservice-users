@@ -23,7 +23,7 @@ public interface IUserPortUseCase {
     Flux<UserModel> getAllUsers();
 
     // Crea un usuario y retorna el usuario creado
-    Mono<AuthModel> createUser(UserModel user);
+    Mono<UserModel> createUser(UserModel user);
 
     // Actualiza un usuario y retorna el usuario actualizado
     Mono<UserModel> updateUser(UserModel user, Long id);
