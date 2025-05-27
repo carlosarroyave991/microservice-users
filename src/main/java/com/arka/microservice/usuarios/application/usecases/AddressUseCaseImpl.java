@@ -49,7 +49,7 @@ public class AddressUseCaseImpl implements IAddressPortUseCase {
 
     /**
      * Servicio que obtiene todas las address existentes de forma reactiva.
-     * @return retorna un Flux que emite cada usuario o error si la lista está vacía.
+     * @return retorna un Flux que emite cada address o error si la lista está vacía.
      */
     @Override
     public Flux<AddressModel> getAllAddress() {
@@ -98,8 +98,6 @@ public class AddressUseCaseImpl implements IAddressPortUseCase {
 
                     return service.save(existing);
                 });
-
-
     }
 
     /**

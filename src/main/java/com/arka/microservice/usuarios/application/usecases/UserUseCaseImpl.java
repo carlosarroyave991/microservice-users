@@ -128,8 +128,8 @@ public class UserUseCaseImpl implements IUserPortUseCase {
      */
     @Override
     public Mono<Void> deleteUser(Long id) {
-        return servicePort.deleteById(id)
+        return servicePort.findById(id)
                 .switchIfEmpty(Mono.error(new DuplicateResourceException(DB_EMPTY)))
-                .flatMap(existing -> servicePort.deleteById(id)).then();
+                .flatMap(existing -> servicePort.deleteById(id));
     }
 }
