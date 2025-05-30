@@ -9,5 +9,7 @@ import reactor.core.publisher.Mono;
  * Se encarga de definir las dependencias externas que el nucleo necesita.
  */
 public interface AuthPersistencePort {
-    Mono<AuthModel> authenticate(UserModel user);
+    /*Mono<String> authenticate(AuthModel model);*/
+    Mono<UserModel> findByEmail(String username);
+    Mono<UserModel> register(UserModel model);
 }

@@ -3,12 +3,12 @@
 -- ================================================
 
 -- 1. Crear el esquema de destino "micro" (si no existe)
-CREATE SCHEMA IF NOT EXISTS micro;
+-- CREATE SCHEMA IF NOT EXISTS micro;
 
 -- 2. Mover las tablas principales del esquema antiguo al nuevo esquema
-ALTER TABLE micro_user.users SET SCHEMA micro;
-ALTER TABLE micro_user.address SET SCHEMA micro;
-ALTER TABLE micro_user.shipping_address SET SCHEMA micro;
+-- ALTER TABLE micro_user.users SET SCHEMA micro;
+-- ALTER TABLE micro_user.address SET SCHEMA micro;
+-- ALTER TABLE micro_user.shipping_address SET SCHEMA micro;
 
 -- 3. (Opcional) Verificar que los objetos se hayan movido correctamente
 -- Puedes ejecutar: \dt micro.*   -- si usas psql
