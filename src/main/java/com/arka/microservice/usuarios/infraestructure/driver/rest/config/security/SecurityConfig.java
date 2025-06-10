@@ -40,10 +40,11 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.DELETE, "/api/users/{userId}/addresses/{addressId}").hasAnyRole("client", "admin")
                         // Para eliminar usuarios, solo los ADMIN pueden.
                         .pathMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("admin").pathMatchers(HttpMethod.GET, "/api/users").hasRole("admin")
-                        .pathMatchers(HttpMethod.GET, "/api/users/addresses/all").hasRole("admin")
+                        .pathMatchers(HttpMethod.GET, "/api/addresses/all").hasRole("admin")
                         .pathMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("client", "admin")
                         // Explicito para POST: lo permiten clientes y administradores.
                         .pathMatchers(HttpMethod.POST, "/api/users/**").hasAnyRole("client", "admin")
+                        .pathMatchers(HttpMethod.POST, "/api/address").hasRole("admin")
                         .anyExchange().authenticated()
                 )
                 .logout(logout -> logout

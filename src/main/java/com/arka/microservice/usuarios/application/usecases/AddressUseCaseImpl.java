@@ -79,6 +79,20 @@ public class AddressUseCaseImpl implements IAddressPortUseCase {
     }
 
     /**
+     * Servicio usado para crear una direccion de forma reactiva para el storage.
+     * @param model objeto address con los parámetros necesarios para la creación.
+     * @return retorna un Mono con la direccion creado o un error.
+     */
+    @Override
+    public Mono<AddressModel> createAddress(AddressModel model) {
+        //validar el codigo postal
+        if (!zipCodeValidationService.isValidZipCode(model.getZipCode())){
+            return Mono.error(new ValidationException(INVALID_ZIPCODE));
+        }
+        return service.save(model);
+    }
+
+    /**
      * Servicio que permite actualizar una direccion especifica de manera reactiva
      * @param model objeto con la data a actualizar
      * @param id identificador del objeto

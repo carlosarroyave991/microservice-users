@@ -11,6 +11,7 @@ import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.req.U
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.AuthResponseDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.UserResponseDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.mapper.IUserMapperDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
+@Tag(name = "Auth Controller", description = "Endpoints para la gestion de autentificacion")
 public class AuthController {
     /*private final IUserPortUseCase userService;*/
     private final IAuthPortUseCase authService;

@@ -1,12 +1,12 @@
 -- ================================================
--- Script PostgreSQL corregido y mejorado (versión 2)
+-- Script PostgreSQL validado para migraciones con Flyway (versión 2)
 -- ================================================
 
--- 1. Crear el esquema (si no existe)
+-- 1. Crear el esquema si no existe
 CREATE SCHEMA IF NOT EXISTS micro;
 
 -- ================================================
--- Tabla micro_user.users
+-- Tabla micro.users
 -- ================================================
 DROP TABLE IF EXISTS micro.users CASCADE;
 
@@ -26,7 +26,7 @@ CREATE TABLE micro.users (
 -- ================================================
 DROP TABLE IF EXISTS micro.address CASCADE;
 
-CREATE TABLE micro.address(
+CREATE TABLE micro.address (
     id SERIAL PRIMARY KEY,
     address VARCHAR(250),
     city VARCHAR(250),
@@ -40,12 +40,12 @@ CREATE TABLE micro.address(
 -- ================================================
 DROP TABLE IF EXISTS micro.shipping_address CASCADE;
 
-CREATE TABLE micro.shipping_address(
+CREATE TABLE micro.shipping_address (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     address_id INT NOT NULL,
-    CONSTRAINT fk_shipping_user FOREIGN KEY (user_id) REFERENCES micro.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_shipping_address FOREIGN KEY (address_id) REFERENCES micro.address(id) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_shipping_user FOREIGN KEY (user_id)
+        REFERENCES micro.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_shipping_address FOREIGN KEY (address_id)
+        REFERENCES micro.address(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-

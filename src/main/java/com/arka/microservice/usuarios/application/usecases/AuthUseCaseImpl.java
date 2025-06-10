@@ -44,6 +44,11 @@ public class AuthUseCaseImpl implements IAuthPortUseCase{
     private final UserTypeValidationService userTypeValidationService;
     private final EmailValidationService emailValidationService;
 
+    /**
+     * Servicio usado para autenticar un usuario de forma reactiva.
+     * @param model objeto usuario con los parámetros necesarios para la autenticación.
+     * @return retorna un Mono con el token de autenticación o un error.
+     */
     @Override
     public Mono<TokenModel> authenticateUser(AuthModel model) {
         return serviceAuth.findByEmail(model.getEmail())

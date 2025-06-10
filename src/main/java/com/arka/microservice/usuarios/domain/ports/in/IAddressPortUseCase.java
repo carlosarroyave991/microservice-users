@@ -18,6 +18,9 @@ public interface IAddressPortUseCase {
     // Crea una direccion y retorna la direccion creada
     Mono<AddressModel> createAddressForUser(AddressModel model, Long userId);
 
+    // Crea una direccion y retorna la direccion creada
+    Mono<AddressModel> createAddress(AddressModel model);
+
     // Actualiza una direccion y retorna la direccion actualizada
     Mono<AddressModel> updateAddress(AddressModel model, Long id);
 
