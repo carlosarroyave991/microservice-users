@@ -2,6 +2,8 @@ package com.arka.microservice.usuarios.application.usecases;
 
 
 import com.arka.microservice.usuarios.domain.exception.DuplicateResourceException;
+import com.arka.microservice.usuarios.domain.exception.ValidationException;
+import com.arka.microservice.usuarios.domain.exception.NotFoundException;
 import com.arka.microservice.usuarios.domain.models.UserModel;
 import com.arka.microservice.usuarios.domain.ports.in.IUserPortUseCase;
 import com.arka.microservice.usuarios.domain.ports.out.UserPersistencePort;
@@ -31,7 +33,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Mono<UserModel> getUserById(Long id) {
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new DuplicateResourceException(USER_NOT_FOUND)));
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)));
     }
 
     /**
@@ -42,7 +44,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Flux<UserModel> getUsersByName(String name){
         return servicePort.findByName(name)
-                .switchIfEmpty(Flux.error(new DuplicateResourceException(USER_NAME_NOT_FOUND)));
+                .switchIfEmpty(Flux.error(new NotFoundException(USER_NAME_NOT_FOUND)));
     }
 
     /**
@@ -52,7 +54,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Flux<UserModel> getAllUsers() {
         return servicePort.findAll()
-                .switchIfEmpty(Flux.error(new DuplicateResourceException(DB_EMPTY)));
+                .switchIfEmpty(Flux.error(new NotFoundException(DB_EMPTY)));
     }
 
 
@@ -66,7 +68,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Mono<UserModel> updateUser(UserModel user, Long id) {
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new DuplicateResourceException(USER_NOT_FOUND)))
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
                 .flatMap(existing -> {
                     existing.setId(id);
                     if (user.getName() != null)existing.setName(user.getName());
@@ -88,8 +90,11 @@ public class UserUseCaseImpl implements IUserPortUseCase {
      */
     @Override
     public Mono<Void> deleteUser(Long id) {
+        if (id == null) {
+            return Mono.error(new ValidationException(INVALID_ID));
+        }
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new DuplicateResourceException(DB_EMPTY)))
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
                 .flatMap(existing -> servicePort.deleteById(id));
     }
 }
