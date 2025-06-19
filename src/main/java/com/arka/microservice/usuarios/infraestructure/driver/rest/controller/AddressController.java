@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Tag(name = "Address Controller", description = "Endpoints para la gestion de direcciones del usuario")
 public class AddressController {
@@ -27,10 +27,24 @@ public class AddressController {
      * @param userId identificador del usuario.
      * @return Flux que emite las direcciones del usuario transformadas a DTO.
      */
-    @GetMapping("/{userId}/addresses")
+    @GetMapping("/users/{userId}/addresses")
     @ResponseStatus(HttpStatus.OK)
     public Flux<AddressResponseDto> getAddressesByUser(@PathVariable Long userId) {
         return serviceAddress.getAddressesByUserId(userId)
+                .map(mapperAddress::toResponse);
+    }
+
+    /**
+     * Endpoint para crear una nueva dirección de manera generalizada.
+     * La validación de datos (por ejemplo, @Valid) se realiza en el DTO recibido.
+     * @param addressRequestDto Datos de la dirección.
+     * @return La dirección creada en forma de DTO.
+     */
+    @PostMapping("/address")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<AddressResponseDto> createAddress(@Valid @RequestBody AddressRequestDto addressRequestDto) {
+        AddressModel addressModel = mapperAddress.toModel(addressRequestDto);
+        return serviceAddress.createAddress(addressModel)
                 .map(mapperAddress::toResponse);
     }
 
@@ -52,7 +66,7 @@ public class AddressController {
      * @param addressRequestDto Datos de la dirección.
      * @return La dirección creada en forma de DTO.
      */
-    @PostMapping("/{userId}/addresses")
+    @PostMapping("/users/{userId}/addresses")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<AddressResponseDto> createAddressForUser(@PathVariable Long userId,
                                                          @Valid @RequestBody AddressRequestDto addressRequestDto) {
@@ -68,7 +82,7 @@ public class AddressController {
      * @param addressRequestDto Datos actualizados de la dirección.
      * @return La dirección actualizada en forma de DTO.
      */
-    @PutMapping("/{userId}/addresses/{id}")
+    @PutMapping("/users/{userId}/addresses/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<AddressResponseDto> updateAddress(@PathVariable Long id,
                                                   @PathVariable Long userId,
@@ -82,7 +96,7 @@ public class AddressController {
      * Endpoint para eliminar una dirección por su ID
      * @return Un Mono vacío que indica que la operación se completó.
      */
-    @DeleteMapping("/{userId}/addresses/{addressId}")
+    @DeleteMapping("/users/{userId}/addresses/{addressId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteAddress(@PathVariable Long addressId, @PathVariable Long userId) {
         return serviceAddress.deleteAddress(addressId);

@@ -74,7 +74,8 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteUserById(@PathVariable Long id) {
-        return service.deleteUser(id);
+        return service.deleteUser(id)
+                .onErrorResume(e -> Mono.error(e)); // Propaga explícitamente la excepción
     }
 
     /**

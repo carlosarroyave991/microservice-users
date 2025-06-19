@@ -29,7 +29,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        //log.error("Exception caught in global error handler: {}", ex.getMessage(), ex);
+        log.error("Exception caught in global error handler: {}", ex.getMessage(), ex);
 
         DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);

@@ -87,12 +87,12 @@ public class UserAdapterImpl implements UserPersistencePort {
      * @param user objeto a guardar
      * @return retorna un objeto mapeado para el dominio
      */
-    @Override
+    /*@Override
     public Mono<UserModel> save(UserModel user) {
         UserEntity entity = mapper.toEntity(user);
         return repository.save(entity)
                 .map(mapper::toModel);
-    }
+    }*/
 
     /**
      * Funcion actualiza un objeto existente. Se busca por id

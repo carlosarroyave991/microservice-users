@@ -13,7 +13,7 @@ public interface UserPersistencePort {
     Flux<UserModel> findByName(String name);
     Mono<UserModel> findByEmail(String email);
     Flux<UserModel> findAll();
-    Mono<UserModel> save(UserModel user);
+   /* Mono<UserModel> save(UserModel user);*/
     Mono<UserModel> update(UserModel user);
     Mono<Void> deleteById(Long id);
 }

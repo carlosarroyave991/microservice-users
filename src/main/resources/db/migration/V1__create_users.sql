@@ -1,16 +1,16 @@
 -- ================================================
--- Script PostgreSQL corregido y mejorado (versión 2)
+-- Script PostgreSQL validado para migraciones con Flyway (versión 2)
 -- ================================================
 
--- 1. Crear el esquema (si no existe)
-CREATE SCHEMA IF NOT EXISTS micro_user;
+-- 1. Crear el esquema si no existe
+CREATE SCHEMA IF NOT EXISTS micro;
 
 -- ================================================
--- Tabla micro_user_user.users
+-- Tabla micro.users
 -- ================================================
-DROP TABLE IF EXISTS micro_user.users CASCADE;
+DROP TABLE IF EXISTS micro.users CASCADE;
 
-CREATE TABLE micro_user.users (
+CREATE TABLE micro.users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(250),
     user_type VARCHAR(50),
@@ -22,11 +22,11 @@ CREATE TABLE micro_user.users (
 );
 
 -- ================================================
--- Tabla micro_user.address
+-- Tabla micro.address
 -- ================================================
-DROP TABLE IF EXISTS micro_user.address CASCADE;
+DROP TABLE IF EXISTS micro.address CASCADE;
 
-CREATE TABLE micro_user.address(
+CREATE TABLE micro.address (
     id SERIAL PRIMARY KEY,
     address VARCHAR(250),
     city VARCHAR(250),
@@ -36,16 +36,16 @@ CREATE TABLE micro_user.address(
 );
 
 -- ================================================
--- Tabla micro_user.shipping_address
+-- Tabla micro.shipping_address
 -- ================================================
-DROP TABLE IF EXISTS micro_user.shipping_address CASCADE;
+DROP TABLE IF EXISTS micro.shipping_address CASCADE;
 
-CREATE TABLE micro_user.shipping_address(
+CREATE TABLE micro.shipping_address (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     address_id INT NOT NULL,
-    CONSTRAINT fk_shipping_user FOREIGN KEY (user_id) REFERENCES micro_user.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_shipping_address FOREIGN KEY (address_id) REFERENCES micro_user.address(id) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_shipping_user FOREIGN KEY (user_id)
+        REFERENCES micro.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_shipping_address FOREIGN KEY (address_id)
+        REFERENCES micro.address(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-

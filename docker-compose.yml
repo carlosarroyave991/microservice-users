@@ -1,25 +1,41 @@
+version: '3.8'
+
 services:
+  # —— 1) Base de datos Postgres compartida ——
   db:
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=arka    # Se crea la base de datos arka
+      POSTGRES_USER:  postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB:    arka
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-#    networks:
-#      - arka-microservices
-#  arka-users:
-#    image: my-springboot-app
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - db
-#    networks:
-#      - arka-microservices
+    networks:
+      - arka-net
+
+  # —— 2) Usuarios ——
+  arka-users:
+    build:
+      context: ./users
+      dockerfile: Dockerfile
+    image: usuarios-app
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL:       jdbc:postgresql://db:5432/arka?currentSchema=micro
+      SPRING_DATASOURCE_USERNAME:  postgres
+      SPRING_DATASOURCE_PASSWORD:  root
+    ports:
+      - "8080:8080"
+    networks:
+      - arka-net
+
+volumes:
+  db_data:
+
+networks:
+  arka-net:
+    driver: bridge

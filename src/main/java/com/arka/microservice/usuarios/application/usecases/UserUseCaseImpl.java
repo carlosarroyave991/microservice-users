@@ -3,16 +3,10 @@ package com.arka.microservice.usuarios.application.usecases;
 
 import com.arka.microservice.usuarios.domain.exception.DuplicateResourceException;
 import com.arka.microservice.usuarios.domain.exception.ValidationException;
-import com.arka.microservice.usuarios.domain.models.AuthModel;
+import com.arka.microservice.usuarios.domain.exception.NotFoundException;
 import com.arka.microservice.usuarios.domain.models.UserModel;
-import com.arka.microservice.usuarios.domain.models.enums.UserType;
 import com.arka.microservice.usuarios.domain.ports.in.IUserPortUseCase;
 import com.arka.microservice.usuarios.domain.ports.out.UserPersistencePort;
-import com.arka.microservice.usuarios.domain.service.user.EmailValidationService;
-import com.arka.microservice.usuarios.domain.service.user.PasswordValidationService;
-import com.arka.microservice.usuarios.domain.service.user.UserTypeValidationService;
-import com.arka.microservice.usuarios.domain.service.user.UsernameValidationService;
-import com.arka.microservice.usuarios.infraestructure.config.utils.DomainUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +22,7 @@ import static com.arka.microservice.usuarios.domain.exception.error.CommonErrorC
 @RequiredArgsConstructor
 public class UserUseCaseImpl implements IUserPortUseCase {
     private final UserPersistencePort servicePort;
-    private final PasswordValidationService passwordValidationService;
-    private final UsernameValidationService usernameValidationService;
-    private final UserTypeValidationService userTypeValidationService;
-    private final EmailValidationService emailValidationService;
+
 
 
     /**
@@ -42,7 +33,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Mono<UserModel> getUserById(Long id) {
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new DuplicateResourceException(USER_NOT_FOUND)));
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)));
     }
 
     /**
@@ -53,7 +44,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Flux<UserModel> getUsersByName(String name){
         return servicePort.findByName(name)
-                .switchIfEmpty(Flux.error(new DuplicateResourceException(USER_NAME_NOT_FOUND)));
+                .switchIfEmpty(Flux.error(new NotFoundException(USER_NAME_NOT_FOUND)));
     }
 
     /**
@@ -63,36 +54,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Flux<UserModel> getAllUsers() {
         return servicePort.findAll()
-                .switchIfEmpty(Flux.error(new DuplicateResourceException(DB_EMPTY)));
-    }
-
-    /**
-     * Servicio usado para crear un usuario de forma reactiva.
-     * @param model objeto usuario con los parámetros necesarios para la creación.
-     * @return retorna un Mono con el usuario creado o un error.
-     */
-    @Transactional
-    @Override
-    public Mono<UserModel> createUser(UserModel model){
-        // Asignar tipo de usuario por defecto si no está definido
-        if (model.getUserType() == null) model.setUserType(UserType.cliente);
-        // Validar el tipo de usuario
-        if (!userTypeValidationService.isValidUserType(model.getUserType())) {
-            return Mono.error(new ValidationException(INVALID_USER_TYPE));
-        }
-        if (!emailValidationService.isValidEmail(model.getEmail())) {
-            return Mono.error(new ValidationException(INVALID_EMAIL));
-        }
-        if (!usernameValidationService.isValidUsername(model.getUsername())){
-            return Mono.error(new ValidationException(INVALID_USERNAME));
-        }
-        if (!passwordValidationService.isValidPassword(model.getPassword())){
-            return Mono.error(new ValidationException(INVALID_PASSWORD));
-        }
-        //Validar si el dni ya existe en la base de datos
-        return servicePort.findByDni(model.getDni())
-                .flatMap(existing -> Mono.<UserModel>error(new DuplicateResourceException(DNI_ALREADY_EXISTS)))
-                .switchIfEmpty(Mono.defer(() -> servicePort.save(model)));
+                .switchIfEmpty(Flux.error(new NotFoundException(DB_EMPTY)));
     }
 
 
@@ -106,7 +68,7 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Mono<UserModel> updateUser(UserModel user, Long id) {
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new DuplicateResourceException(USER_NOT_FOUND)))
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
                 .flatMap(existing -> {
                     existing.setId(id);
                     if (user.getName() != null)existing.setName(user.getName());
@@ -128,8 +90,11 @@ public class UserUseCaseImpl implements IUserPortUseCase {
      */
     @Override
     public Mono<Void> deleteUser(Long id) {
+        if (id == null) {
+            return Mono.error(new ValidationException(INVALID_ID));
+        }
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new DuplicateResourceException(DB_EMPTY)))
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
                 .flatMap(existing -> servicePort.deleteById(id));
     }
 }

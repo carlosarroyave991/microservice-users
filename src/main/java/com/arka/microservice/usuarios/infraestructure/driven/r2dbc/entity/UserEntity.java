@@ -17,7 +17,6 @@ import java.util.List;
 public class UserEntity {
     @Id
     private Long id;
-
     private String name;
 
     @Column("user_type")
