@@ -16,7 +16,7 @@ services:
 #    image: my-springboot-app
 #    build:
 #      context: .
-#      dockerfile: Dockerfile
+#      Dockerfile: Dockerfile
 #    ports:
 #      - "8080:8080"
 #    depends_on:

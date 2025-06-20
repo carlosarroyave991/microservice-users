@@ -1,23 +1,31 @@
 package com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp;
 
 import com.arka.microservice.usuarios.domain.models.enums.UserType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponseDto {
-
     private Long id;
     private String name;
     private UserType userType;
     private String email;
     private String phone;
     private String dni;
+    private List<AddressResponseDto> addressModelList;
 
-    public UserResponseDto(Long id, String dni, String phone, String email, UserType userType, String name) {
-        this.id = id;
-        this.dni = dni;
-        this.phone = phone;
-        this.email = email;
-        this.userType = userType;
-        this.name = name;
+    public List<AddressResponseDto> getAddressModelList() {
+        return addressModelList;
+    }
+
+    public void setAddressModelList(List<AddressResponseDto> addressModelList) {
+        this.addressModelList = addressModelList;
     }
 
     public Long getId() {
@@ -26,14 +34,6 @@ public class UserResponseDto {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDni() {
@@ -52,14 +52,6 @@ public class UserResponseDto {
         this.phone = phone;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public UserType getUserType() {
         return userType;
     }
@@ -67,4 +59,22 @@ public class UserResponseDto {
     public void setUserType(UserType userType) {
         this.userType = userType;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
+
+

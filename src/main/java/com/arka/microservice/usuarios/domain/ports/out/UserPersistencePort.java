@@ -11,7 +11,7 @@ public interface UserPersistencePort {
     Mono<UserModel> findById(Long id);
     Mono<UserModel> findByDni(String dni);
     Flux<UserModel> findByName(String name);
-    Mono<UserModel> findByEmail(String email);
+    //Mono<UserModel> findByEmail(String email);
     Flux<UserModel> findAll();
    /* Mono<UserModel> save(UserModel user);*/
     Mono<UserModel> update(UserModel user);

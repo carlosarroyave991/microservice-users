@@ -1,21 +1,15 @@
-package com.arka.microservice.usuarios.domain.models;
+package com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp;
 
+import com.arka.microservice.usuarios.domain.models.AddressModel;
 import com.arka.microservice.usuarios.domain.models.enums.UserType;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * Entidad cliente creada para el dominio.
- * La idea es que sea inmutable para garantizar consistencia.
- */
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserModel {
+@NoArgsConstructor
+public class UserWithAddressResponseDto {
     private Long id;
     private String name;
     private UserType userType;
@@ -23,15 +17,14 @@ public class UserModel {
     private String phone;
     private String dni;
     private String username;
-    private String password;
-    private List<AddressModel> addressModelList;
+    private List<AddressResponseDto> shippingAddresses;
 
-    public Long getId() {
-        return id;
+    public List<AddressResponseDto> getShippingAddresses() {
+        return shippingAddresses;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setShippingAddresses(List<AddressResponseDto> shippingAddresses) {
+        this.shippingAddresses = shippingAddresses;
     }
 
     public String getUsername() {
@@ -40,22 +33,6 @@ public class UserModel {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDni() {
@@ -82,6 +59,14 @@ public class UserModel {
         this.email = email;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UserType getUserType() {
         return userType;
     }
@@ -90,11 +75,11 @@ public class UserModel {
         this.userType = userType;
     }
 
-    public List<AddressModel> getAddressModelList() {
-        return addressModelList;
+    public Long getId() {
+        return id;
     }
 
-    public void setAddressModelList(List<AddressModel> addressModelList) {
-        this.addressModelList = addressModelList;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

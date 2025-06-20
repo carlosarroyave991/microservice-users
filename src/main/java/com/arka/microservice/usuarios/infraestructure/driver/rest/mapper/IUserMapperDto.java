@@ -3,6 +3,7 @@ package com.arka.microservice.usuarios.infraestructure.driver.rest.mapper;
 import com.arka.microservice.usuarios.domain.models.AuthModel;
 import com.arka.microservice.usuarios.domain.models.TokenModel;
 import com.arka.microservice.usuarios.domain.models.UserModel;
+import com.arka.microservice.usuarios.domain.models.UserWithAddressesModel;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.req.AuthRequestDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.req.UserRequestDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.AuthResponseDto;

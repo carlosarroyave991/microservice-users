@@ -7,6 +7,7 @@ import com.arka.microservice.usuarios.domain.exception.NotFoundException;
 import com.arka.microservice.usuarios.domain.models.UserModel;
 import com.arka.microservice.usuarios.domain.ports.in.IUserPortUseCase;
 import com.arka.microservice.usuarios.domain.ports.out.UserPersistencePort;
+import com.arka.microservice.usuarios.infraestructure.driven.r2dbc.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,7 @@ import static com.arka.microservice.usuarios.domain.exception.error.CommonErrorC
 @RequiredArgsConstructor
 public class UserUseCaseImpl implements IUserPortUseCase {
     private final UserPersistencePort servicePort;
-
-
+    private final AddressUseCaseImpl addressService;
 
     /**
      * Servicio para obtener un usuario especifico de forma reactiva.
@@ -33,8 +33,18 @@ public class UserUseCaseImpl implements IUserPortUseCase {
     @Override
     public Mono<UserModel> getUserById(Long id) {
         return servicePort.findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)));
+                .switchIfEmpty(Mono.error(new NotFoundException(USER_NOT_FOUND)))
+                .flatMap(user -> 
+                    addressService.getAddressesByUserId(id)
+                        .collectList()
+                        .map(addresses -> {
+                            user.setAddressModelList(addresses);
+                            return user;
+                        })
+                        .defaultIfEmpty(user)
+                );
     }
+
 
     /**
      * Servicio para buscar usuarios por nombre de forma reactiva.

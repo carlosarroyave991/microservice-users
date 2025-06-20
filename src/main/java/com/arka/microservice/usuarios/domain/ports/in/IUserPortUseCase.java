@@ -2,6 +2,8 @@ package com.arka.microservice.usuarios.domain.ports.in;
 
 import com.arka.microservice.usuarios.domain.models.AuthModel;
 import com.arka.microservice.usuarios.domain.models.UserModel;
+import com.arka.microservice.usuarios.infraestructure.driven.r2dbc.entity.UserEntity;
+import org.springframework.data.repository.query.Param;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

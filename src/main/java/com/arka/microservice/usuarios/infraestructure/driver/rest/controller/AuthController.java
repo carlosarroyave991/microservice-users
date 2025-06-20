@@ -11,6 +11,12 @@ import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.req.U
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.AuthResponseDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.UserResponseDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.mapper.IUserMapperDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,22 +38,36 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    /**
-     * Endpoint para crear un usuario.
-     * @Valid valida automaticamente los datos que llegan en el request
-     * @param requestDto Datos del usuario a crear.
-     * @return Usuario creado con código 201.
-     */
+    @Operation(summary = "Registrar nuevo usuario", description = "Crea una nueva cuenta de usuario en el sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente",
+                content = @Content(schema = @Schema(implementation = UserResponseDto.class))),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+        @ApiResponse(responseCode = "409", description = "El usuario ya existe"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<UserResponseDto> register(@RequestBody UserRequestDto requestDto) {
+    public Mono<UserResponseDto> register(
+            @Parameter(description = "Datos del nuevo usuario", required = true)
+            @RequestBody UserRequestDto requestDto) {
         UserModel model = mapper.toModel(requestDto);
         return authService.register(model)
                 .map(mapper::toResponseWithoutId);
     }
 
+    @Operation(summary = "Iniciar sesión", description = "Autentica un usuario y devuelve un token JWT")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Autenticación exitosa",
+                content = @Content(schema = @Schema(implementation = AuthResponseDto.class))),
+        @ApiResponse(responseCode = "400", description = "Credenciales inválidas"),
+        @ApiResponse(responseCode = "401", description = "Credenciales incorrectas"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PostMapping("/login")
-    public Mono<AuthResponseDto> login(@RequestBody @Valid AuthRequestDto authRequestDto) {
+    public Mono<AuthResponseDto> login(
+            @Parameter(description = "Credenciales de acceso", required = true)
+            @RequestBody @Valid AuthRequestDto authRequestDto) {
         log.info("Solicitud de login recibida para email: {}", authRequestDto.getEmail());
         AuthModel model = mapper.authReqtoModel(authRequestDto);
         return authService.authenticateUser(model)

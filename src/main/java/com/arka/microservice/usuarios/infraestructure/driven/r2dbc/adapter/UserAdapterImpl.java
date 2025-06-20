@@ -1,20 +1,21 @@
 package com.arka.microservice.usuarios.infraestructure.driven.r2dbc.adapter;
 
 
-import com.arka.microservice.usuarios.domain.exception.DuplicateResourceException;
 import com.arka.microservice.usuarios.domain.models.UserModel;
 import com.arka.microservice.usuarios.domain.ports.out.UserPersistencePort;
 import com.arka.microservice.usuarios.infraestructure.driven.r2dbc.entity.UserEntity;
 import com.arka.microservice.usuarios.infraestructure.driven.r2dbc.mapper.IUserEntityMapper;
 import com.arka.microservice.usuarios.infraestructure.driven.r2dbc.repository.IUserRepository;
+import com.arka.microservice.usuarios.domain.models.AddressModel;
+
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import static com.arka.microservice.usuarios.domain.exception.error.CommonErrorCode.USER_NOT_FOUND;
 
 
 /**
@@ -67,11 +68,11 @@ public class UserAdapterImpl implements UserPersistencePort {
      * @param email identificador del objeto a buscar
      * @return retorna un objeto mapeado para dominio
      */
-    @Override
+    /*@Override
     public Mono<UserModel> findByEmail(String email) {
         return repository.findByEmail(email)
                 .map(mapper::toModel);
-    }
+    }*/
 
     /**
      * Funcion que consulta todos los objetos y los mapea a modelo.
@@ -114,4 +115,5 @@ public class UserAdapterImpl implements UserPersistencePort {
     public Mono<Void> deleteById(Long id) {
         return repository.deleteById(id);
     }
+
 }
