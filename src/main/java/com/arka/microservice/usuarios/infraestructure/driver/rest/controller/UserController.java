@@ -1,11 +1,9 @@
 package com.arka.microservice.usuarios.infraestructure.driver.rest.controller;
 
 import com.arka.microservice.usuarios.domain.models.UserModel;
-import com.arka.microservice.usuarios.domain.models.UserWithAddressesModel;
 import com.arka.microservice.usuarios.domain.ports.in.IUserPortUseCase;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.req.UserRequestDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.UserResponseDto;
-import com.arka.microservice.usuarios.infraestructure.driver.rest.dto.user.resp.UserWithAddressResponseDto;
 import com.arka.microservice.usuarios.infraestructure.driver.rest.mapper.IUserMapperDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,7 +20,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,12 +55,11 @@ public class UserController {
     })
     @GetMapping("/name")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<List<UserResponseDto>> getUsersByName(
+    public Flux<UserResponseDto> getUsersByName(
             @Parameter(description = "Nombre del usuario a buscar", required = true, example = "Juan")
             @RequestParam String name) {
         return service.getUsersByName(name)
-                .collectList()
-                .map(mapperDto::toResponseDtos);
+                .map(mapperDto::toResponseWithoutId);
     }
 
     @Operation(summary = "Actualizar usuario", description = "Actualiza los datos de un usuario existente")

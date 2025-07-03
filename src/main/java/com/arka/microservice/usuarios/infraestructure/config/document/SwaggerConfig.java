@@ -1,8 +1,11 @@
 package com.arka.microservice.usuarios.infraestructure.config.document;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +22,14 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Micro User API")
                         .description("API para gestión de usuarios")
-                        .version("v1.0"));
-    }
-
-    @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .group("users")
-                .pathsToMatch("/api/**")
-                .build();
+                        .version("v1.0"))
+                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                    .components(new Components()
+                        .addSecuritySchemes("Bearer Authentication",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                                        .description("Ingresa el token JWT")));
     }
 }

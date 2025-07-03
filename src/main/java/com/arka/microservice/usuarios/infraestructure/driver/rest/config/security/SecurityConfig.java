@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 public class SecurityConfig {
     // Lista blanca de rutas: todas las rutas bajo /api/v1/auth/** serán públicas.
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**"};
-    private static final String[] CLIENT_LIST_URL = {"/api/users/**"};
+    private static final String[] WHITE_LIST_OPENAPI = {"/swagger", "/swagger/**", "/api-docs", "/api-docs/**", "/webjars/**"};
 
     private final JwtAuthenticationWebFilter jwtAuthenticationWebFilter;
     private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(WHITE_LIST_URL).permitAll()
+                        .pathMatchers(WHITE_LIST_OPENAPI).permitAll()
                         .pathMatchers("/logout").permitAll()
                         // Específicamente: para eliminar direcciones, permitir tanto a CLIENT como a ADMIN
                         .pathMatchers(HttpMethod.DELETE, "/api/users/{userId}/addresses/{addressId}").hasAnyRole("client", "admin")

@@ -41,6 +41,11 @@ public class UserUseCaseImpl implements IUserPortUseCase {
                             user.setAddressModelList(addresses);
                             return user;
                         })
+                        .onErrorResume(e -> {
+                            // Si hay error al buscar direcciones, devolvemos el usuario con lista vacía
+                            user.setAddressModelList(java.util.Collections.emptyList());
+                            return Mono.just(user);
+                        })
                         .defaultIfEmpty(user)
                 );
     }
