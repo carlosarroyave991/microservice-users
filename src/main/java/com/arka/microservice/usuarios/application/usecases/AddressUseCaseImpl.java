@@ -123,6 +123,6 @@ public class AddressUseCaseImpl implements IAddressPortUseCase {
         // Primero, busca el registro de ShippingAddress que relacione el usuario y la dirección a borrar.
         return service.findById(addressId)
                 .switchIfEmpty(Mono.error(new DuplicateResourceException(ID_NOT_FOUND)))
-                .then(service.deleteById(addressId));
+                .flatMap(address -> service.deleteById(addressId));
     }
 }
