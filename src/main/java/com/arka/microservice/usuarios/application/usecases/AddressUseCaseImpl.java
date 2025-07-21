@@ -11,6 +11,7 @@ import com.arka.microservice.usuarios.domain.service.address.ZipCodeValidationSe
 import com.arka.microservice.usuarios.infraestructure.driven.r2dbc.entity.ShippingAddressEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -62,6 +63,7 @@ public class AddressUseCaseImpl implements IAddressPortUseCase {
      * @param address objeto address con los parámetros necesarios para la creación.
      * @return retorna un Mono con la direccion creado o un error.
      */
+    @Transactional
     @Override
     public Mono<AddressModel> createAddressForUser(AddressModel address, Long userId) {
         //validar el codigo postal
