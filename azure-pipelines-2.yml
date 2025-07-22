@@ -1,0 +1,51 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  # Grupo de variables con AWS_ACCOUNT_ID y AWS_REGION
+  - group: dev-terraform
+
+  # Tag “latest” y opcionalmente BuildId para versionado
+  - name: IMAGE_TAG
+    value: latest
+  - name: BUILD_TAG
+    value: $(Build.BuildId)
+
+stages:
+- stage: BuildAndPush
+  displayName: 'Build & Push a AWS ECR'
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      # 1) Clona tu código
+      - checkout: self
+
+      # 2) Login en AWS (Service Connection configurada en Azure DevOps)
+      - task: AWSCLI@1
+        displayName: 'Configure AWS Credentials'
+        inputs:
+          awsCredentials: 'aws-terraform-ecr'
+          regionName: '$(AWS_REGION)'
+
+      # 3) Login en ECR
+      - script: |
+          aws ecr get-login-password --region $(AWS_REGION) \
+            | docker login --username AWS \
+                --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+        displayName: 'Login to ECR'
+
+      # 4) Build & Push de la imagen
+      - task: Docker@2
+        displayName: 'Build & Push Docker Image'
+        inputs:
+          command: buildAndPush
+          containerRegistry: '$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com'
+          repository: 'users'        # ← Cambia “users” por el nombre de tu servicio
+          dockerfile: 'Dockerfile'
+          tags: |
+            $(BUILD_TAG)
+            $(IMAGE_TAG)
