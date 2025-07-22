@@ -22,7 +22,7 @@ variables:
 
 stages:
 - stage: BuildAndPush
-  displayName: '🚀 Build & Push Docker Image to ECR'
+  displayName: 'Build & Push Docker Image to ECR'
   jobs:
   - job: DockerBuild
     displayName: Build & Push
