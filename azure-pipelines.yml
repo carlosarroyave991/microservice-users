@@ -1,19 +1,56 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# azure-pipelines.yml
+# Pipeline para construir la imagen Docker de 'users' y subirla a ECR
 
 trigger:
-- basic
+  branches:
+    include:
+      - main
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  # Grupo con aws_account_id, environment, db_*, etc.
+  - group: dev-terraform
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  # Región AWS (si no está en el grupo)
+  - name: AWS_REGION
+    value: us-east-1
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # Nombre de tu microservicio y tag
+  - name: IMAGE_NAME
+    value: users
+  - name: IMAGE_TAG
+    value: latest
+
+stages:
+- stage: BuildAndPush
+  displayName: '🚀 Build & Push Docker Image to ECR'
+  jobs:
+  - job: DockerBuild
+    displayName: Build & Push
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      # 1) Clonar el repositorio
+      - checkout: self
+
+      # 2) Autenticarse en AWS
+      - task: AWSCLI@1
+        displayName: 'Configure AWS Credentials'
+        inputs:
+          awsCredentials: 'aws-terraform-ecr'    # Tu Service Connection de AWS
+          regionName: '$(AWS_REGION)'
+
+      # 3) Login en ECR con AWS CLI
+      - script: |
+          aws ecr get-login-password --region $(AWS_REGION) \
+            | docker login --username AWS \
+                --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+        displayName: 'Login to ECR'
+
+      # 4) Build, tag y push de la imagen
+      - script: |
+          IMAGE_URI=$(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(IMAGE_NAME):$(IMAGE_TAG)
+          echo "Building $IMAGE_URI"
+          docker build -t $IMAGE_URI .
+          echo "Pushing $IMAGE_URI"
+          docker push $IMAGE_URI
+        displayName: 'Build & Push Docker Image'
